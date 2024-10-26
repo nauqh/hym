@@ -42,8 +42,7 @@ with center:
 st.write("##")
 _, l, r, _ = st.columns([0.5, 1, 4, 0.5])
 with l:
-    st.image(
-        f"https://ddragon.leagueoflegends.com/cdn/13.23.1/img/profileicon/3836.png", width=250)
+    st.image("app/img/logo.svg", width=250)
     st.link_button("Summoner profile", "https://nauqh.github.io")
 with r:
     w, l, t = calculate_wins_loses(df)
@@ -65,7 +64,7 @@ with r:
 
 # NOTE: LINEUPS
 st.write("##")
-st.subheader("👨‍💻Lineups")
+st.subheader("👨‍💻 Lineups")
 columns = st.columns(5)
 for col, puuid in zip(columns, cf.puuids):
     info = api.get_info(puuid, 'vn2')
@@ -79,7 +78,7 @@ for col, puuid in zip(columns, cf.puuids):
 
 # NOTE: ROLES DISTRIBUTION
 st.write("##")
-st.subheader("🍰Roles Distribution")
+st.subheader("🍰 Roles Distribution")
 
 l, r = st.columns([1, 1])
 with l:
@@ -132,11 +131,10 @@ with r:
         col.write(f"""
                   :blue[{k:.1f}] / :red[{d:.0f}] / :green[{a:.0f}]
                     """)
-    st.info("")
 
 # NOTE: EARLY GAME PERFORMANCE
 st.write("##")
-st.subheader("🕐Early Game Performance")
+st.subheader("🕐 Early Game Performance")
 fig = graph_team_early_game(get_team_early_game_stats(df))
 st.plotly_chart(fig, use_container_width=True)
 
