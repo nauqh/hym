@@ -243,3 +243,12 @@ with r:
     st.markdown(f"{champion['blurb']}")
     st.markdown(f"`Title`: {champion['title']}")
     st.markdown(f"`Role`: {', '.join(champion['tags'])}")
+
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+"""
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
