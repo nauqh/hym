@@ -196,29 +196,18 @@ with l:
                    f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
 
 with r:
-    stats = {
-        "wins": 5,
-        "loses": 5,
-        "kills": 25.0,
-        "deaths": 15.0,
-        "assists": 35.0,
-        "dmg": 50000.0,
-        "penta": 0,
-        "vision": 1.5,
-        "cspermin": 10.0,
-        "objsStolen": 2,
-        "timealive": 20 * 60
-    }
+    stats = get_summoner_stats(df, summoner['name'])
+    w, l, t = calculate_wins_loses(df)
     columns_data = {
-        "🏆 Games": f"{stats['wins'] + stats['loses']}G {stats['wins']}W {stats['loses']}L",
-        "📈 Winrates": f"{(stats['wins'] / (stats['wins'] + stats['loses'])) * 100:.1f} %",
-        "💀 KDA": f"{stats['kills']:.1f}/{stats['deaths']:.1f}/{stats['assists']:.1f}",
-        "⚡ Damage": f"{stats['dmg']:,.0f}",
-        "🔥 Pentakills": stats['penta'],
-        "🔍 Vision": f"{stats['vision']:.1f}",
-        "🍃 CSperMin": stats['cspermin'],
-        "🏰 Objectives": f"Max {stats['objsStolen']} stolen",
-        "🕰 Time Alive": f"Longest {int(stats['timealive'] / 60)} min"
+        "🎯Games": f"{t}G :blue[{w}]W :red[{l}]L",
+        "🏆Winrates": f"{w/t*100:.2f} %",
+        "⚔️KDA": f"{stats['kills']:.1f}/{stats['deaths']:.1f}/{stats['assists']:.1f}",
+        "🥊Damage": f"{stats['totalDamageDealtToChampions']:,.0f}",
+        "🔥Pentakills": stats['pentaKills'],
+        "🔍Vision": "N.A.",
+        "🧑‍🌾Minions": f"Avg. {stats['totalMinionsKilled']:.1f}",
+        "⛓️‍💥CCs Dealt": f"Avg. {stats['totalTimeCCDealt']:.1f}s",
+        "👩‍🚀Time Alive": f"Avg. {int(stats['longestTimeSpentLiving'] / 60)} min"
     }
     for i in range(0, len(columns_data), 3):
         l, m, r = st.columns([1, 1, 1])

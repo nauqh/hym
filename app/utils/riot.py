@@ -150,6 +150,15 @@ def get_team_damage_proportion(df: pd.DataFrame):
     return stats
 
 
+def get_summoner_stats(df: pd.DataFrame, name: str):
+    cols = ['kills', 'deaths', 'assists', 'totalDamageDealtToChampions', 'pentaKills',
+            'totalMinionsKilled', 'totalTimeCCDealt', 'longestTimeSpentLiving']
+    agg_dict = {col: (col, 'sum') if col in ('pentaKills')
+                else (col, 'mean') for col in cols}
+    stats = df.groupby('riotIdGameName').agg(**agg_dict).reset_index()
+    return stats[stats['riotIdGameName'] == name].to_dict(orient='records')[0]
+
+
 if __name__ == "__main__":
     api = RiotAPI('RGAPI-a384a673-d288-42ec-a860-55a1602dba94')
     s = api.get_info(
