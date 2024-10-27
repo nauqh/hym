@@ -121,6 +121,27 @@ def get_team_early_game_stats(df: pd.DataFrame):
     return stats
 
 
+def get_team_combat_stats(df: pd.DataFrame):
+    stats = df.groupby('riotIdGameName')[[
+        'totalDamageDealtToChampions',
+        'totalDamageTaken',
+        'totalHealsOnTeammates',
+        'goldEarned'
+    ]].mean().reset_index()
+
+    return stats
+
+
+def get_team_damage_proportion(df: pd.DataFrame):
+    stats = df.groupby('riotIdGameName')[[
+        'physicalDamageDealtToChampions',
+        'magicDamageDealtToChampions',
+        'trueDamageDealtToChampions'
+    ]].mean().reset_index()
+
+    return stats
+
+
 if __name__ == "__main__":
     api = RiotAPI('RGAPI-a384a673-d288-42ec-a860-55a1602dba94')
     s = api.get_info(

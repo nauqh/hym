@@ -205,3 +205,87 @@ def graph_damage_over_matches(df):
     fig.update_xaxes(showgrid=False)
 
     return fig
+
+
+def graph_team_combat(combat_stats: dict) -> None:
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    # Metrics for primary y-axis
+    metrics_primary = ['goldEarned',
+                       'totalDamageDealtToChampions', 'totalDamageTaken']
+
+    for metric in metrics_primary:
+        fig.add_trace(go.Bar(
+            x=combat_stats['riotIdGameName'],
+            y=combat_stats[metric],
+            name=metric.title(),
+            hovertemplate='%{x}<br>%{fullData.name}: %{y:,.0f} <extra></extra>',
+            hoverlabel=dict(font_color='#fff'),
+        ), secondary_y=False)
+
+    fig.add_trace(go.Scatter(
+        x=combat_stats['riotIdGameName'],
+        y=combat_stats['totalHealsOnTeammates'],
+        mode='lines+markers',
+        name='Heals On Teammates',
+        hovertemplate='%{x}<br>Heal on Teammates: %{y:,.0f} <extra></extra>',
+        line=dict(color='gold', width=2),
+        marker=dict(size=8)
+    ), secondary_y=True)
+
+    # Update layout for the plot
+    fig.update_layout(
+        title="Team Combat Performance",
+        xaxis_title="Summoner",
+        barmode='group',
+        hoverlabel=dict(bgcolor='#010A13', font_color='#fff'),
+        template='plotly_dark',
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5
+        ),
+        height=500,
+    )
+
+    fig.update_yaxes(title_text="Damage Dealt/Taken", secondary_y=False)
+    fig.update_yaxes(title_text="Heal on Teammates",
+                     secondary_y=True, showgrid=False)
+    fig.update_xaxes(title=None)
+
+    return fig
+
+
+def graph_team_dmgproportion(damage_proportion: dict):
+    names = damage_proportion['riotIdGameName']
+    trues = damage_proportion['trueDamageDealtToChampions']
+    physicals = damage_proportion['physicalDamageDealtToChampions']
+    magics = damage_proportion['magicDamageDealtToChampions']
+
+    fig = go.Figure()
+
+    damage_types = ['True Damage', 'Physical Damage', 'Magic Damage']
+    colors = ['#ff9500', '#ffc300', '#ffdd00']
+
+    for damage_type, color in zip(damage_types, colors):
+        fig.add_trace(go.Bar(
+            y=names,
+            x=trues if damage_type == 'True Damage' else (
+                physicals if damage_type == 'Physical Damage' else magics),
+            name=damage_type,
+            orientation='h',
+            marker=dict(color=color),
+            hovertemplate='%{x:,.0f}<extra></extra>'
+        ))
+
+    fig.update_layout(title='Team Damage Proportion', barmode='stack',
+                      height=500,
+                      yaxis_title="Damage Dealt",
+                      hoverlabel=dict(bgcolor='#010A13', font_color='#fff'),
+                      legend=dict(orientation="h", yanchor="top",
+                                  xanchor="center", x=0.5, y=1.1),
+                      template='plotly_dark')
+
+    return fig

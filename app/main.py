@@ -140,3 +140,13 @@ st.plotly_chart(fig, use_container_width=True)
 
 fig = graph_damage_over_matches(df)
 st.plotly_chart(fig, use_container_width=True)
+
+# NOTE: COMBAT PERFROMANCE
+st.write("##")
+st.subheader("🗡️ Combat Performance")
+
+fig = graph_team_combat(get_team_combat_stats(df))
+st.plotly_chart(fig, use_container_width=True)
+
+fig = graph_team_dmgproportion(get_team_damage_proportion(df))
+st.plotly_chart(fig, use_container_width=True)
