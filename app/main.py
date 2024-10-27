@@ -225,8 +225,7 @@ with r:
             st.subheader(title)
             st.subheader(value)
 
-st.write("##")
-st.subheader("✨ Signature champion")
+st.subheader("Signature champion")
 
 name = df[df['riotIdGameName'] == summoner['name']].groupby(
     'riotIdGameName')['championName'].value_counts().idxmax()[1]
