@@ -244,11 +244,6 @@ with r:
     st.markdown(f"`Title`: {champion['title']}")
     st.markdown(f"`Role`: {', '.join(champion['tags'])}")
 
-hide_streamlit_style = """
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-</style>
-"""
-
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown("""
+### ⭐ Star the project on Github <iframe src="https://ghbtns.com/github-btn.html?user=nauqh&repo=porobot&type=star&count=true" width="150" height="20" title="GitHub"></iframe>
+""", unsafe_allow_html=True)
