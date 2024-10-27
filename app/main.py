@@ -17,9 +17,6 @@ cf = Config()
 api = RiotAPI(cf.TOKEN)
 df = load_data(cf.puuids)
 
-if 'selected_player' not in st.session_state:
-    st.session_state.selected_player = None
-
 
 # NOTE: LANDING
 _, center, _ = st.columns([1, 10, 1])
@@ -69,21 +66,28 @@ with r:
 
 
 @st.cache_data
+@st.cache_data(ttl=3600)
 def get_team_lineups(puuids):
     return [api.get_info(puuid, 'vn2') for puuid in puuids]
 
 
 st.write("##")
-st.header(" Lineups")
+st.header("📑 Team Lineups")
+
 infos = get_team_lineups(cf.puuids)
+for info in infos:
+    info['name'] = next(
+        (key for key, value in cf.players.items() if value == info['puuid']), None)
+
 columns = st.columns(5)
+
 for col, info in zip(columns, infos):
     col.image(
         f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{info['profileIconId']}.png")
-    col.write(f"""
-                {info['gameName']} #{info['tagLine']}\n
-                Level: {info['summonerLevel']}
-                """)
+    col.write(
+        f"""
+        {info['name'].title()} `#{info['tagLine']}`\n
+        Level: {info['summonerLevel']}""")
 
 # NOTE: ROLES DISTRIBUTION
 st.write("##")
@@ -162,7 +166,6 @@ st.plotly_chart(fig, use_container_width=True)
 
 # NOTE: INDIVIDUAL PERFORMANCE
 st.write("##")
-st.header("👤 Individual Performance")
 
 l, r = st.columns([1, 2])
 with l:
