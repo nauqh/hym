@@ -244,6 +244,7 @@ with r:
     st.markdown(f"`Title`: {champion['title']}")
     st.markdown(f"`Role`: {', '.join(champion['tags'])}")
 
-
+st.write("##")
+st.markdown("### ⭐ Star the project on Github")
 components.iframe(
     "https://ghbtns.com/github-btn.html?user=nauqh&type=follow&count=true&size=large")
