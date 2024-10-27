@@ -72,6 +72,14 @@ def load_data(puuids: set) -> pd.DataFrame:
                                         == puuids]['matchId']
         return df[df['matchId'].isin(focus_matches)]
 
+    df['riotIdGameName'] = df['puuid'].map({
+        '8UIhStkspIglog9paowA4mXzlckT-xySwWNIFac3o2ojumva9ffkFMda_jGpW_hhInKWpvUp5pPPrA': 'tuandao1311',
+        'mh3B8Naz1MbJ6RE7dJTu3ZCLh7Rwo6CCJQiA-fVlLXUuQmkibMVMztpCLALJMMJQm4QOevN1-u0lnA': 'cozybearrrrr',
+        'DV0Aad31H16g3lItoojolWMPZQYOj0l90KzVSUV-qF3QlF92hOC_WLLssdR1MqPS-3UMEKp0Mn5woA': 'tuanancom',
+        'aTa5_43m0w8crNsi-i9nxGpSVU06WZBuK-h9bZEOK0g_lJox3XF4Dv4BzVwZieRj0QwlGnJ4SZbftg': 'nauqh',
+        'idASdW5eSrO5Oih-ViK07RdeXE33JM1Mm3FwV7JiveTwbqfjl1vQUvToJ95c1B4EeQd8BAZgXkGSUw': 'wavepin'
+    })
+
     df_focus = get_focus_matches(df, puuids)
     return df_focus
 
