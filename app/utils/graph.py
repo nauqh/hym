@@ -95,7 +95,7 @@ def graph_team_participation(team_participation_stats: dict) -> None:
 
     fig.update_layout(
         title="Team Participation Performance",
-        xaxis_title="Summoner",
+        xaxis_title=None,
         barmode='group',
         template='plotly_dark',
         hoverlabel=dict(bgcolor='#010A13', font_color='#fff'),
@@ -145,7 +145,7 @@ def graph_team_early_game(team_early_game_stats: dict):
 
     fig.update_layout(
         title="Early Game Performance",
-        xaxis_title="Summoner",
+        xaxis_title=None,
         barmode='group',
         template='plotly_dark',
         legend=dict(
@@ -158,8 +158,6 @@ def graph_team_early_game(team_early_game_stats: dict):
         hoverlabel=dict(bgcolor='#010A13', font_color='#fff'),
         height=500
     )
-
-    fig.update_xaxes(title=None)
 
     return fig
 
