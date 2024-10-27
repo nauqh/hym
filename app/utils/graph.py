@@ -118,8 +118,8 @@ def graph_team_participation(team_participation_stats: dict) -> None:
 
 
 def generate_word_cloud(champions):
-    wordcloud = WordCloud(background_color='white').generate(champions)
-    plt.figure()
+    wordcloud = WordCloud(background_color='black').generate(champions)
+    plt.figure(frameon=False)
     plt.imshow(wordcloud)
     plt.axis('off')
 
