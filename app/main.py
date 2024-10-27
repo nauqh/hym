@@ -168,35 +168,34 @@ st.plotly_chart(fig, use_container_width=True)
 
 # NOTE: INDIVIDUAL PERFORMANCE
 st.write("##")
+l, r = st.columns([1, 2])
+with l:
+    st.header("📑Team ranked")
+with r:
+    options = list(cf.players.keys())
+    if 'selected_summoner' not in st.session_state:
+        st.session_state.selected_summoner = None
 
-_, m, _ = st.columns([0.5, 10, 0.5])
-with m:
-    l, r = st.columns([1, 2])
-    with l:
-        st.header("📑Team ranked")
-    with r:
-        options = list(cf.players.keys())
-        if 'selected_summoner' not in st.session_state:
-            st.session_state.selected_summoner = None
-
-        st.session_state.selected_summoner = st.selectbox(
-            "Select a column:",
-            options,
-            key="column_selectbox",
-            index=(
-                options.index(st.session_state.selected_summoner)
-                if st.session_state.selected_summoner in options
-                else 0
-            )
+    st.session_state.selected_summoner = st.selectbox(
+        "Select a column:",
+        options,
+        key="column_selectbox",
+        index=(
+            options.index(st.session_state.selected_summoner)
+            if st.session_state.selected_summoner in options
+            else 0
         )
-    l, r = st.columns([1, 2])
-    with l:
-        summoner = next(
-            (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
-        st.image(
-            f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{summoner['profileIconId']}.png")
-        st.link_button("Summoner profile",
-                       f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
+    )
+l, r = st.columns([1, 2])
+with l:
+    summoner = next(
+        (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
+    st.image(
+        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{summoner['profileIconId']}.png")
+    st.link_button("Summoner profile",
+                   f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
+
+with r:
     stats = {
         "wins": 5,
         "loses": 5,
@@ -221,8 +220,6 @@ with m:
         "🏰 Objectives": f"Max {stats['objsStolen']} stolen",
         "🕰 Time Alive": f"Longest {int(stats['timealive'] / 60)} min"
     }
-
-    st.write("##")
     for i in range(0, len(columns_data), 3):
         l, m, r = st.columns([1, 1, 1])
         with l:
@@ -238,22 +235,22 @@ with m:
             st.subheader(title)
             st.subheader(value)
 
-    st.write("##")
-    st.subheader("✨Signature champion")
+st.write("##")
+st.subheader("✨ Signature champion")
 
-    name = df[df['riotIdGameName'] == summoner['name']].groupby(
-        'riotIdGameName')['championName'].value_counts().idxmax()[1]
-    champion = requests.get(
-        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/data/en_US/champion/{name}.json").json()['data'][name]
+name = df[df['riotIdGameName'] == summoner['name']].groupby(
+    'riotIdGameName')['championName'].value_counts().idxmax()[1]
+champion = requests.get(
+    f"https://ddragon.leagueoflegends.com/cdn/14.21.1/data/en_US/champion/{name}.json").json()['data'][name]
 
-    l, r = st.columns([1, 1])
-    with l:
-        st.image(
-            f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{name}_0.jpg")
-    with r:
-        st.write(f"""
-                <h3 style='font-family: Recoleta-Regular; font-weight: 200; font-size: 2rem; text-align: center;color:#ffc300'>{champion['name']}</h3>
-                """, unsafe_allow_html=True)
-        st.markdown(f"{champion['blurb']}")
-        st.markdown(f"`Title`: {champion['title']}")
-        st.markdown(f"`Role`: {', '.join(champion['tags'])}")
+l, r = st.columns([1, 1])
+with l:
+    st.image(
+        f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{name}_0.jpg")
+with r:
+    st.write(f"""
+            <h3 style='font-family: Recoleta-Regular; font-weight: 200; font-size: 2rem; text-align: center;color:#ffc300'>{champion['name']}</h3>
+            """, unsafe_allow_html=True)
+    st.markdown(f"{champion['blurb']}")
+    st.markdown(f"`Title`: {champion['title']}")
+    st.markdown(f"`Role`: {', '.join(champion['tags'])}")
