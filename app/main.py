@@ -172,13 +172,25 @@ with l:
     st.header("📑Team ranked")
 with r:
     options = list(cf.players.keys())
-    if 'selected_column' not in st.session_state:
-        st.session_state.selected_column = None
+    if 'selected_summoner' not in st.session_state:
+        st.session_state.selected_summoner = None
 
-    st.session_state.selected_column = st.selectbox(
+    st.session_state.selected_summoner = st.selectbox(
         "Select a column:",
         options,
         key="column_selectbox",
-        index=options.index(
-            st.session_state.selected_column) if st.session_state.selected_column in options else 0
+        index=(
+            options.index(st.session_state.selected_summoner)
+            if st.session_state.selected_summoner in options
+            else 0
+        )
     )
+
+l, m, r = st.columns([1, 1, 1])
+with l:
+    summoner = next(
+        (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
+    st.image(
+        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{summoner['profileIconId']}.png")
+    st.link_button("Summoner profile",
+                   f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
