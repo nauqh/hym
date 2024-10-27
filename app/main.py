@@ -170,7 +170,7 @@ st.plotly_chart(fig, use_container_width=True)
 st.write("##")
 l, r = st.columns([1, 2])
 with l:
-    st.header("📑Team ranked")
+    st.header("📑Summoner")
 with r:
     options = list(cf.players.keys())
     if 'selected_summoner' not in st.session_state:
