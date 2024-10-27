@@ -17,15 +17,18 @@ cf = Config()
 api = RiotAPI(cf.TOKEN)
 df = load_data(cf.puuids)
 
+if 'selected_player' not in st.session_state:
+    st.session_state.selected_player = None
+
 
 # NOTE: LANDING
 _, center, _ = st.columns([1, 10, 1])
 with center:
     st.markdown("""
                 <h1 style='text-align: center; font-weight: 600;
-                    font-size: 6rem'>State of 
-                <span style='background-color: #ffc300; padding: 0 0.5rem; color: #010A13; border-radius: 0.5rem'>HYM</span> 
-                <span style='color: #ffc300; font-weight: 800'> > </span> 
+                    font-size: 6rem'>State of
+                <span style='background-color: #ffc300; padding: 0 0.5rem; color: #010A13; border-radius: 0.5rem'>HYM</span>
+                <span style='color: #ffc300; font-weight: 800'> > </span>
                 <br> Performance 2024</h1>""", unsafe_allow_html=True)
     st.markdown("""<h3 style='text-align: center; font-weight: 400;
                 font-size: 2rem'>Dive into my team's journey in ARAM! Explore key metrics, trends, and insights from our analysis of recent matches.</h3>""",
@@ -63,22 +66,28 @@ with r:
         st.image(f"app/img/CHALLENGER.png", width=250)
 
 # NOTE: LINEUPS
+
+
+@st.cache_data
+def get_team_lineups(puuids):
+    return [api.get_info(puuid, 'vn2') for puuid in puuids]
+
+
 st.write("##")
-st.subheader("👨‍💻 Lineups")
+st.header(" Lineups")
+infos = get_team_lineups(cf.puuids)
 columns = st.columns(5)
-for col, puuid in zip(columns, cf.puuids):
-    info = api.get_info(puuid, 'vn2')
+for col, info in zip(columns, infos):
     col.image(
         f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{info['profileIconId']}.png")
     col.write(f"""
-              {info['gameName']} #{info['tagLine']}\n
-              Level: {info['summonerLevel']}
-              """)
-
+                {info['gameName']} #{info['tagLine']}\n
+                Level: {info['summonerLevel']}
+                """)
 
 # NOTE: ROLES DISTRIBUTION
 st.write("##")
-st.subheader("🍰 Roles Distribution")
+st.header("🍰 Roles Distribution")
 
 l, r = st.columns([1, 1])
 with l:
@@ -109,7 +118,7 @@ with r:
 
 # NOTE: OVERALL PERFORMANCE
 st.write("##")
-st.subheader("🏆Overall Performance")
+st.header("🏆Overall Performance")
 
 fig = graph_team_participation(get_team_participation_stats(df))
 st.plotly_chart(fig, use_container_width=True)
@@ -120,7 +129,7 @@ with l:
     st.pyplot(plt, clear_figure=True, use_container_width=True)
 
 with r:
-    st.subheader("Most used champions")
+    st.header("Most used champions")
     champions = df['championName'].value_counts().nlargest(5).index
     cols = st.columns(5)
     for col, champion in zip(cols, champions):
@@ -134,7 +143,7 @@ with r:
 
 # NOTE: EARLY GAME PERFORMANCE
 st.write("##")
-st.subheader("🕐 Early Game Performance")
+st.header("🕐 Early Game Performance")
 fig = graph_team_early_game(get_team_early_game_stats(df))
 st.plotly_chart(fig, use_container_width=True)
 
@@ -143,10 +152,30 @@ st.plotly_chart(fig, use_container_width=True)
 
 # NOTE: COMBAT PERFROMANCE
 st.write("##")
-st.subheader("🗡️ Combat Performance")
+st.header("🗡️ Combat Performance")
 
 fig = graph_team_combat(get_team_combat_stats(df))
 st.plotly_chart(fig, use_container_width=True)
 
 fig = graph_team_dmgproportion(get_team_damage_proportion(df))
 st.plotly_chart(fig, use_container_width=True)
+
+# NOTE: INDIVIDUAL PERFORMANCE
+st.write("##")
+st.header("👤 Individual Performance")
+
+l, r = st.columns([1, 2])
+with l:
+    st.header("📑Team ranked")
+with r:
+    options = list(cf.players.keys())
+    if 'selected_column' not in st.session_state:
+        st.session_state.selected_column = None
+
+    st.session_state.selected_column = st.selectbox(
+        "Select a column:",
+        options,
+        key="column_selectbox",
+        index=options.index(
+            st.session_state.selected_column) if st.session_state.selected_column in options else 0
+    )
