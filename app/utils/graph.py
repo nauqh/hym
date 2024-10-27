@@ -287,3 +287,34 @@ def graph_team_dmgproportion(damage_proportion: dict):
                       template='plotly_dark')
 
     return fig
+
+
+def graph_winrate_by_side(df):
+    side_win_rates = df.groupby('teamId')[
+        'win'].mean() * 100
+
+    fig = go.Figure()
+
+    for team_id, win_rate in side_win_rates.items():
+        side = 'Red' if team_id == 100 else 'Blue'
+
+        fig.add_trace(go.Bar(
+            name='',
+            y=[f'{side} side'],
+            x=[win_rate],
+            orientation='h',
+            hoverinfo='text',
+            hovertext=f'{win_rate:.0f}%',
+            width=0.7
+        ))
+
+    fig.update_layout(
+        title='Winrate by Side',
+        margin=dict(t=30, l=0, r=0, b=30),
+        showlegend=False,
+        hoverlabel=dict(bgcolor='#010A13', font_color='#fff'),
+        xaxis_title=None,
+        height=200,
+    )
+
+    return fig

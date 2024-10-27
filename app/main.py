@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import json
 
 from utils.config import Config
 from utils.riot import *
@@ -95,10 +94,13 @@ st.header("🍰 Roles Distribution")
 
 l, r = st.columns([1, 1])
 with l:
-    st.info("📌 Roles are assigned based on Damage Dealt & Taken and CCs")
     fig = graph_role_dist(df)
     st.plotly_chart(fig, use_container_width=True)
+
+    fig = graph_winrate_by_side(df)
+    st.plotly_chart(fig, use_container_width=True)
 with r:
+    st.info("Roles are assigned based on Damage Dealt & Taken and CCs")
     df_roles = df.groupby('riotIdGameName').agg({
         'assigned_roles': lambda roles: pd.Series([role for sublist in roles for role in sublist]).mode().tolist(),
         'championName': lambda x: x.mode()[0]
@@ -127,13 +129,13 @@ st.header("🏆Overall Performance")
 fig = graph_team_participation(get_team_participation_stats(df))
 st.plotly_chart(fig, use_container_width=True)
 
-l, r = st.columns([1, 1])
+l, r = st.columns([1.2, 1])
 with l:
     plt = generate_word_cloud(' '.join(df['championName']))
     st.pyplot(plt, clear_figure=True, use_container_width=True)
 
 with r:
-    st.header("Most used champions")
+    st.subheader("Most used champions")
     champions = df['championName'].value_counts().nlargest(5).index
     cols = st.columns(5)
     for col, champion in zip(cols, champions):
@@ -167,30 +169,91 @@ st.plotly_chart(fig, use_container_width=True)
 # NOTE: INDIVIDUAL PERFORMANCE
 st.write("##")
 
-l, r = st.columns([1, 2])
-with l:
-    st.header("📑Team ranked")
-with r:
-    options = list(cf.players.keys())
-    if 'selected_summoner' not in st.session_state:
-        st.session_state.selected_summoner = None
+_, m, _ = st.columns([0.5, 10, 0.5])
+with m:
+    l, r = st.columns([1, 2])
+    with l:
+        st.header("📑Team ranked")
+    with r:
+        options = list(cf.players.keys())
+        if 'selected_summoner' not in st.session_state:
+            st.session_state.selected_summoner = None
 
-    st.session_state.selected_summoner = st.selectbox(
-        "Select a column:",
-        options,
-        key="column_selectbox",
-        index=(
-            options.index(st.session_state.selected_summoner)
-            if st.session_state.selected_summoner in options
-            else 0
+        st.session_state.selected_summoner = st.selectbox(
+            "Select a column:",
+            options,
+            key="column_selectbox",
+            index=(
+                options.index(st.session_state.selected_summoner)
+                if st.session_state.selected_summoner in options
+                else 0
+            )
         )
-    )
+    l, r = st.columns([1, 2])
+    with l:
+        summoner = next(
+            (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
+        st.image(
+            f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{summoner['profileIconId']}.png")
+        st.link_button("Summoner profile",
+                       f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
+    stats = {
+        "wins": 5,
+        "loses": 5,
+        "kills": 25.0,
+        "deaths": 15.0,
+        "assists": 35.0,
+        "dmg": 50000.0,
+        "penta": 0,
+        "vision": 1.5,
+        "cspermin": 10.0,
+        "objsStolen": 2,
+        "timealive": 20 * 60
+    }
+    columns_data = {
+        "🏆 Games": f"{stats['wins'] + stats['loses']}G {stats['wins']}W {stats['loses']}L",
+        "📈 Winrates": f"{(stats['wins'] / (stats['wins'] + stats['loses'])) * 100:.1f} %",
+        "💀 KDA": f"{stats['kills']:.1f}/{stats['deaths']:.1f}/{stats['assists']:.1f}",
+        "⚡ Damage": f"{stats['dmg']:,.0f}",
+        "🔥 Pentakills": stats['penta'],
+        "🔍 Vision": f"{stats['vision']:.1f}",
+        "🍃 CSperMin": stats['cspermin'],
+        "🏰 Objectives": f"Max {stats['objsStolen']} stolen",
+        "🕰 Time Alive": f"Longest {int(stats['timealive'] / 60)} min"
+    }
 
-l, m, r = st.columns([1, 1, 1])
-with l:
-    summoner = next(
-        (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
-    st.image(
-        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{summoner['profileIconId']}.png")
-    st.link_button("Summoner profile",
-                   f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
+    st.write("##")
+    for i in range(0, len(columns_data), 3):
+        l, m, r = st.columns([1, 1, 1])
+        with l:
+            title, value = list(columns_data.items())[i]
+            st.subheader(title)
+            st.subheader(value)
+        with m:
+            title, value = list(columns_data.items())[i + 1]
+            st.subheader(title)
+            st.subheader(value)
+        with r:
+            title, value = list(columns_data.items())[i + 2]
+            st.subheader(title)
+            st.subheader(value)
+
+    st.write("##")
+    st.subheader("✨Signature champion")
+
+    name = df[df['riotIdGameName'] == summoner['name']].groupby(
+        'riotIdGameName')['championName'].value_counts().idxmax()[1]
+    champion = requests.get(
+        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/data/en_US/champion/{name}.json").json()['data'][name]
+
+    l, r = st.columns([1, 1])
+    with l:
+        st.image(
+            f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{name}_0.jpg")
+    with r:
+        st.write(f"""
+                <h3 style='font-family: Recoleta-Regular; font-weight: 200; font-size: 2rem; text-align: center;color:#ffc300'>{champion['name']}</h3>
+                """, unsafe_allow_html=True)
+        st.markdown(f"{champion['blurb']}")
+        st.markdown(f"`Title`: {champion['title']}")
+        st.markdown(f"`Role`: {', '.join(champion['tags'])}")
