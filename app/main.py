@@ -247,5 +247,4 @@ with r:
 
 
 components.iframe(
-    "https://ghbtns.com/github-btn.html?user=nauqh&type=follow&count=true&size=large", height=500)
-st.markdown("""### ⭐ Star the project on Github <iframe src="https://ghbtns.com/github-btn.html?user=nauqh&type=follow&count=true&size=large" frameborder="0" scrolling="0" width="230" height="30" title="GitHub"></iframe>""", unsafe_allow_html=True)
+    "https://ghbtns.com/github-btn.html?user=nauqh&type=follow&count=true&size=large")
