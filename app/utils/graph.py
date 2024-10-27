@@ -282,7 +282,7 @@ def graph_team_dmgproportion(damage_proportion: dict):
 
     fig.update_layout(title='Team Damage Proportion', barmode='stack',
                       height=500,
-                      yaxis_title="Damage Dealt",
+                      xaxis_title="Damage Dealt",
                       hoverlabel=dict(bgcolor='#010A13', font_color='#fff'),
                       legend=dict(orientation="h", yanchor="top",
                                   xanchor="center", x=0.5, y=1.1),
