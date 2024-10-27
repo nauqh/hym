@@ -225,6 +225,7 @@ with r:
             st.subheader(title)
             st.subheader(value)
 
+st.write("##")
 st.subheader("Signature champion")
 
 name = df[df['riotIdGameName'] == summoner['name']].groupby(
