@@ -5,7 +5,7 @@
 ![Plotly](https://img.shields.io/badge/Plotly-%233F4F75.svg?style=for-the-badge&logo=plotly&logoColor=white)
 ![Riot Games](https://img.shields.io/badge/riotgames-D32936.svg?style=for-the-badge&logo=riotgames&logoColor=white)
 
-**Update** (26 Oct 2024): Visit the web application at [Porostream](https://hym.streamlit.app/)
+**Update** (26 Oct 2024): Visit the web application at [Porostream](https://hymaram.streamlit.app/)
 
 ## About the project
 
