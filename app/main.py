@@ -227,6 +227,9 @@ l, r = st.columns([1, 1])
 with l:
     st.image(
         f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{name}_0.jpg")
+    plt = generate_word_cloud(' '.join(
+        df[df['riotIdGameName'] == st.session_state.selected_summoner]['championName']))
+    st.pyplot(plt, clear_figure=True, use_container_width=True)
 with r:
     st.write(f"""
             <h3 style='font-family: Recoleta-Regular; font-weight: 200; font-size: 2rem; text-align: center;color:#ffc300'>{champion['name']}</h3>
@@ -234,6 +237,7 @@ with r:
     st.markdown(f"{champion['blurb']}")
     st.markdown(f"`Title`: {champion['title']}")
     st.markdown(f"`Role`: {', '.join(champion['tags'])}")
+
 
 st.write("##")
 st.markdown("### ⭐ Star the project on Github")
