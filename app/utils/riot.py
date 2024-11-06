@@ -105,6 +105,63 @@ def get_champ_kda(champion, df):
     return kills, deaths, assists
 
 
+def calculate_roles_winrate(df):
+    # Aggregate and format most used champion with usage count, calculate win rate, average damage, and damage rank
+    most_used_champion_stats = (
+        df.groupby(['riotIdGameName', 'championName'])
+        .agg(
+            usage_count=('championName', 'size'),
+            winrate=('win', lambda x: (x == 1).mean() * 100),
+            damage_rank=('damage_rank', 'mean')
+        )
+        .sort_values(['riotIdGameName', 'usage_count'], ascending=[True, False])
+        .reset_index()
+    )
+
+    # Combine champion name and usage count into one column
+    most_used_champion_stats['Most Used Champion'] = most_used_champion_stats['championName'] + \
+        ' (' + most_used_champion_stats['usage_count'].astype(str) + ')'
+
+    # Keep only the relevant columns and drop duplicates to get the most used champion per riotIdGameName
+    most_used_champion_stats = most_used_champion_stats.drop_duplicates(subset=['riotIdGameName'])[
+        ['riotIdGameName', 'Most Used Champion', 'winrate', 'damage_rank']
+    ]
+
+    # Step 2: Calculate the most appearing roles for each riotIdGameName
+    df_roles = (
+        df.groupby('riotIdGameName')
+        .agg(
+            most_appearing_roles=('assigned_roles', lambda roles: ', '.join(
+                pd.Series([role for sublist in roles for role in sublist])
+                .value_counts()
+                .nlargest(2)  # Get the top 2 roles by frequency
+                .index.tolist()
+            ))
+        )
+        .reset_index()
+    )
+
+    # Step 3: Merge both results to get a single combined table
+    combined_result = most_used_champion_stats.merge(
+        df_roles, on='riotIdGameName')
+
+    # Rename columns for clarity
+    combined_result = combined_result.rename(columns={
+        'riotIdGameName': 'Summoner',
+        'winrate': 'Win Rate (%)',
+        'damage_rank': 'Damage Rank',
+        'most_appearing_roles': 'Roles'
+    })
+
+    # Format the final combined result
+    combined_result['Win Rate (%)'] = combined_result['Win Rate (%)'].astype(
+        int)
+    combined_result['Damage Rank'] = combined_result['Damage Rank'].apply(
+        lambda x: f"{x:,.1f}")
+
+    return combined_result
+
+
 def get_team_participation_stats(df: pd.DataFrame):
     cols = ['kills', 'deaths', 'assists', 'challenges.killParticipation']
     agg_dict = {

@@ -102,21 +102,11 @@ with l:
     st.plotly_chart(fig, use_container_width=True)
 with r:
     st.info("Roles are assigned based on Damage Dealt & Taken and CCs")
-    df_roles = df.groupby('riotIdGameName').agg({
-        'assigned_roles': lambda roles: pd.Series([role for sublist in roles for role in sublist]).mode().tolist(),
-        'championName': lambda x: x.mode()[0]
-    }).reset_index()
+    df_roles = calculate_roles_winrate(df)
 
-    df_roles = df_roles.rename(columns={
-        'riotIdGameName': 'Summoner',
-        'assigned_roles': 'Most Appearing Roles',
-        'championName': 'Most Used Champion'
-    })
-
-    df_roles['Most Appearing Roles'] = df_roles['Most Appearing Roles'].apply(
-        lambda roles: ', '.join(roles))
-
-    st.dataframe(df_roles, hide_index=True)
+    st.dataframe(
+        df_roles[['Summoner', 'Roles', 'Most Used Champion',
+                  'Win Rate (%)', 'Damage Rank']], hide_index=True)
 
     st.write(
         "Roles are assigned based on a player's performance in a match. Players who rank among the top 3 in total damage dealt and primarily use physical damage are assigned the :red[AD Carry] role, while those who rank highly in damage dealt but primarily use magical damage are assigned the :blue[AP Carry] role.")
