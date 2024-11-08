@@ -61,12 +61,15 @@ with center:
 # NOTE: TEAM INFOMATION
 st.write("##")
 _, l, r, _ = st.columns([0.5, 1, 4, 0.5])
+
 with l:
     st.image("app/img/logo.svg", width=250)
     st.link_button("Summoner profile", "https://nauqh.github.io")
+
 with r:
     w, l, t = calculate_wins_loses(df)
     _, a, b, _ = st.columns([1, 3, 2, 1])
+
     with a:
         st.write(f"""<span style='font-weight: 200; font-size: 1.5rem'>Challenger ARAM</span>""",
                  unsafe_allow_html=True)
@@ -84,6 +87,7 @@ with r:
             "`Time period`:", periods, index=periods.index('All time'))
         if filtered_period and filtered_period != 'All time':
             df = filter_by_period(df, filtered_period)
+
     with b:
         st.image(f"app/img/CHALLENGER.png", width=250)
 
