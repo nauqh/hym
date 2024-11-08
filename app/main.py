@@ -75,10 +75,15 @@ with r:
                     font-size: 3rem'>Hoi Yeu Meo</span>""",
                  unsafe_allow_html=True)
         st.subheader(f":blue[{w}]W - :red[{l}]L")
-        st.write(
-            f"`Level`: 370")
-        st.write(f"`LP`: 100")
+
         st.write(f"`Winrate`: {w/t*100:.2f}%")
+
+        periods = [f"{date.strftime('%B')} {date.year}" for date in df['date'].dt.to_period(
+            "M").unique()] + ['All time']
+        filtered_period = st.selectbox(
+            "`Time period`:", periods, index=periods.index('All time'))
+        if filtered_period and filtered_period != 'All time':
+            df = filter_by_period(df, filtered_period)
     with b:
         st.image(f"app/img/CHALLENGER.png", width=250)
 
@@ -109,20 +114,7 @@ for col, info in zip(columns, infos):
         {info['name'].title()} `#{info['tagLine']}`\n
         Level: {info['summonerLevel']}""")
 
-# NOTE: FILTER
-st.write("##")
-st.header("📊 Filter data")
-
-l, r = st.columns([1, 1])
-with l:
-    periods = [f"{date.strftime('%B')} {date.year}" for date in df['date'].dt.to_period(
-        "M").unique()] + ['All time']
-    filtered_period = st.selectbox(
-        "Select time period", periods, index=periods.index('All time'))
-    if filtered_period and filtered_period != 'All time':
-        df = filter_by_period(df, filtered_period)
-
-# NOTE: ROLES DISTRIBUTION
+    # NOTE: ROLES DISTRIBUTION
 st.write("##")
 st.header("🍰 Roles Distribution")
 
