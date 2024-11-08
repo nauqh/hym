@@ -18,6 +18,26 @@ api = RiotAPI(cf.TOKEN)
 df = load_data(cf.puuids)
 
 
+def filter_by_period(df, period):
+    # Extract the month and year from the selected period
+    month_name, year = period.split()
+    # Convert month name to month number
+    month = pd.to_datetime(month_name, format='%B').month
+    year = int(year)
+
+    # Define the start and end dates for filtering
+    start_date = f"{year}-{month:02d}-01"
+    if month == 12:  # If December, increment the year for the end date
+        end_date = f"{year + 1}-01-01"
+    else:
+        end_date = f"{year}-{month + 1:02d}-01"
+
+    # Filter the DataFrame for the selected period
+    filtered_df = df[(df['date'] >= start_date) & (df['date'] < end_date)]
+
+    return filtered_df
+
+
 # NOTE: LANDING
 _, center, _ = st.columns([1, 10, 1])
 with center:
@@ -89,6 +109,19 @@ for col, info in zip(columns, infos):
         {info['name'].title()} `#{info['tagLine']}`\n
         Level: {info['summonerLevel']}""")
 
+# NOTE: FILTER
+st.write("##")
+st.header("📊 Filter data")
+
+l, r = st.columns([1, 1])
+with l:
+    periods = [f"{date.strftime('%B')} {date.year}" for date in df['date'].dt.to_period(
+        "M").unique()] + ['All time']
+    filtered_period = st.selectbox(
+        "Select time period", periods, index=periods.index('All time'))
+    if filtered_period and filtered_period != 'All time':
+        df = filter_by_period(df, filtered_period)
+
 # NOTE: ROLES DISTRIBUTION
 st.write("##")
 st.header("🍰 Roles Distribution")
@@ -101,7 +134,6 @@ with l:
     fig = graph_winrate_by_side(df)
     st.plotly_chart(fig, use_container_width=True)
 with r:
-    st.info("Roles are assigned based on Damage Dealt & Taken and CCs")
     df_roles = calculate_roles_winrate(df)
 
     st.dataframe(

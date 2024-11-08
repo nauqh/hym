@@ -81,6 +81,8 @@ def load_data(puuids: set) -> pd.DataFrame:
     })
 
     df_focus = get_focus_matches(df, puuids)
+    df_focus['date'] = pd.to_datetime(
+        df_focus['info.gameStartTimestamp'], unit='ms')
     return df_focus
 
 

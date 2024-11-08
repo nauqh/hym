@@ -166,10 +166,6 @@ def graph_damage_over_matches(df):
     df['encoded_matchId'] = 'M' + \
         (df['matchId'].astype('category').cat.codes + 1).astype(str)
 
-    df['info.gameStartTimestamp'] = pd.to_datetime(
-        df['info.gameStartTimestamp'], unit='ms')
-    df['date'] = df['info.gameStartTimestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
-
     grouped_stats = df.groupby(['encoded_matchId', 'riotIdGameName', 'date'])[
         'totalDamageDealtToChampions'].sum().reset_index().sort_values(by='date')
     summoners = grouped_stats['riotIdGameName'].unique()
