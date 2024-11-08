@@ -62,7 +62,7 @@ with center:
 st.write("##")
 _, l, r, _ = st.columns([0.5, 1, 4, 0.5])
 with l:
-    st.image("app/img/logo.svg", width=250)
+    st.image("app/img/logo.svg", width=300)
     st.link_button("Summoner profile", "https://nauqh.github.io")
 with r:
     w, l, t = calculate_wins_loses(df)
