@@ -60,7 +60,10 @@ class RiotAPI:
 
 def load_data(puuids: set) -> pd.DataFrame:
 
-    df = pd.read_csv('app/data/100games.csv')
+    df1 = pd.read_csv('app/data/100games_new.csv')
+    df2 = pd.read_csv('app/data/100games.csv')
+    df = pd.concat([df1, df2])
+    df = df.drop_duplicates()
 
     def get_focus_matches(df: pd.DataFrame, puuids: set) -> pd.DataFrame:
         """
