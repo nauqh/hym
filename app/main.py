@@ -112,13 +112,23 @@ columns = st.columns(5)
 
 for col, info in zip(columns, infos):
     col.image(
-        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{info['profileIconId']}.png")
+        f"https://ddragon.leagueoflegends.com/cdn/14.23.1/img/profileicon/{info['profileIconId']}.png")
     col.write(
         f"""
         {info['name'].title()} `#{info['tagLine']}`\n
         Level: {info['summonerLevel']}""")
 
-    # NOTE: ROLES DISTRIBUTION
+chosen_summoners = st.multiselect(
+    "Choose summoners",
+    [info['name'] for info in infos],
+)
+if len(chosen_summoners) > 1:
+    df = df[df['riotIdGameName'].isin(chosen_summoners)]
+else:
+    st.error("Please select at least 2 summoners")
+    st.stop()
+
+# NOTE: ROLES DISTRIBUTION
 st.write("##")
 st.header("🍰 Roles Distribution")
 
@@ -159,7 +169,7 @@ with r:
     cols = st.columns(5)
     for col, champion in zip(cols, champions):
         col.image(
-            f'https://ddragon.leagueoflegends.com/cdn/14.21.1/img/champion/{champion}.png')
+            f'https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/{champion}.png')
         wr = get_champ_winrate(champion, df)
         k, d, a = get_champ_kda(champion, df)
         col.write(f"""
@@ -191,7 +201,7 @@ l, r = st.columns([1, 2])
 with l:
     st.header("📑Summoner")
 with r:
-    options = list(cf.players.keys())
+    options = chosen_summoners
     if 'selected_summoner' not in st.session_state:
         st.session_state.selected_summoner = None
 
