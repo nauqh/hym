@@ -259,7 +259,7 @@ st.subheader("Signature champion")
 name = df[df['riotIdGameName'] == summoner['name']].groupby(
     'riotIdGameName')['championName'].value_counts().idxmax()[1]
 champion = requests.get(
-    f"https://ddragon.leagueoflegends.com/cdn/14.21.1/data/en_US/champion/{name}.json").json()['data'][name]
+    f"https://ddragon.leagueoflegends.com/cdn/14.23.1/data/en_US/champion/{name}.json").json()['data'][name]
 
 l, r = st.columns([1, 1])
 with l:
