@@ -220,7 +220,7 @@ with l:
     summoner = next(
         (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
     st.image(
-        f"https://ddragon.leagueoflegends.com/cdn/14.21.1/img/profileicon/{summoner['profileIconId']}.png")
+        f"https://ddragon.leagueoflegends.com/cdn/14.23.1/img/profileicon/{summoner['profileIconId']}.png")
     st.link_button("Summoner profile",
                    f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
 
