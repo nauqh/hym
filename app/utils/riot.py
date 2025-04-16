@@ -62,7 +62,8 @@ def load_data(puuids: set) -> pd.DataFrame:
 
     df1 = pd.read_csv('app/data/100games_new.csv')
     df2 = pd.read_csv('app/data/100games.csv')
-    df = pd.concat([df1, df2])
+    df3 = pd.read_csv('app/data/100games_0425.csv')
+    df = pd.concat([df1, df2, df3])
     df = df.drop_duplicates()
 
     def get_focus_matches(df: pd.DataFrame, puuids: set) -> pd.DataFrame:
@@ -80,7 +81,7 @@ def load_data(puuids: set) -> pd.DataFrame:
         'mh3B8Naz1MbJ6RE7dJTu3ZCLh7Rwo6CCJQiA-fVlLXUuQmkibMVMztpCLALJMMJQm4QOevN1-u0lnA': 'cozybearrrrr',
         'DV0Aad31H16g3lItoojolWMPZQYOj0l90KzVSUV-qF3QlF92hOC_WLLssdR1MqPS-3UMEKp0Mn5woA': 'tuanancom',
         'aTa5_43m0w8crNsi-i9nxGpSVU06WZBuK-h9bZEOK0g_lJox3XF4Dv4BzVwZieRj0QwlGnJ4SZbftg': 'nauqh',
-        'idASdW5eSrO5Oih-ViK07RdeXE33JM1Mm3FwV7JiveTwbqfjl1vQUvToJ95c1B4EeQd8BAZgXkGSUw': 'wavepin'
+        'idASdW5eSrO5Oih-ViK07RdeXE33JM1Mm3FwV7JiveTwbqfjl1vQUvToJ95c1B4EeQd8BAZgXkGSUw': 'wavepin',
     })
 
     df_focus = get_focus_matches(df, puuids)

@@ -1,6 +1,7 @@
 import streamlit.components.v1 as components
 import streamlit as st
 import pandas as pd
+import requests
 
 from utils.config import Config
 from utils.riot import *
@@ -8,7 +9,7 @@ from utils.graph import *
 
 st.set_page_config(
     page_title="Porostream",
-    page_icon="app/img/favicon.png",
+    page_icon="app/img/logo.svg",
     layout="wide"
 )
 
@@ -38,6 +39,18 @@ def filter_by_period(df, period):
     return filtered_df
 
 
+# Fetch latest version
+try:
+    response = requests.get(
+        "https://ddragon.leagueoflegends.com/api/versions.json", timeout=10)
+    response.raise_for_status()
+    versions = response.json()
+    latest_version = versions[0] if versions else None
+except Exception as e:
+    latest_version = None
+    print(f"Error fetching LoL version: {e}")
+
+
 # NOTE: LANDING
 _, center, _ = st.columns([1, 10, 1])
 with center:
@@ -46,7 +59,7 @@ with center:
                     font-size: 6rem'>State of
                 <span style='background-color: #ffc300; padding: 0 0.5rem; color: #010A13; border-radius: 0.5rem'>HYM</span>
                 <span style='color: #ffc300; font-weight: 800'> > </span>
-                <br> Performance 2024</h1>""", unsafe_allow_html=True)
+                <br> Performance 2025</h1>""", unsafe_allow_html=True)
     st.markdown("""<h3 style='text-align: center; font-weight: 400;
                 font-size: 2rem'>Dive into my team's journey in ARAM! Explore key metrics, trends, and insights from our analysis of recent matches.</h3>""",
                 unsafe_allow_html=True)
@@ -71,9 +84,9 @@ with r:
     _, a, b, _ = st.columns([1, 3, 2, 1])
 
     with a:
-        st.write(f"""<span style='font-weight: 200; font-size: 1.5rem'>Challenger ARAM</span>""",
+        st.write("""<span style='font-weight: 200; font-size: 1.5rem'>Challenger ARAM</span>""",
                  unsafe_allow_html=True)
-        st.write(f"""<span style='
+        st.write("""<span style='
                     font-family: Recoleta-Regular; font-weight: 400;
                     font-size: 3rem'>Hoi Yeu Meo</span>""",
                  unsafe_allow_html=True)
@@ -89,7 +102,7 @@ with r:
             df = filter_by_period(df, filtered_period)
 
     with b:
-        st.image(f"app/img/CHALLENGER.png", width=250)
+        st.image("app/img/CHALLENGER.png", width=250)
 
 # NOTE: LINEUPS
 
@@ -108,11 +121,11 @@ for info in infos:
     info['name'] = next(
         (key for key, value in cf.players.items() if value == info['puuid']), None)
 
-columns = st.columns(5)
+columns = st.columns(len(infos))
 
 for col, info in zip(columns, infos):
     col.image(
-        f"https://ddragon.leagueoflegends.com/cdn/14.23.1/img/profileicon/{info['profileIconId']}.png")
+        f"https://ddragon.leagueoflegends.com/cdn/{latest_version}/img/profileicon/{info['profileIconId']}.png")
     col.write(
         f"""
         {info['name'].title()} `#{info['tagLine']}`\n
@@ -169,7 +182,7 @@ with r:
     cols = st.columns(5)
     for col, champion in zip(cols, champions):
         col.image(
-            f'https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/{champion}.png')
+            f'https://ddragon.leagueoflegends.com/cdn/{latest_version}/img/champion/{champion}.png')
         wr = get_champ_winrate(champion, df)
         k, d, a = get_champ_kda(champion, df)
         col.write(f"""
@@ -216,11 +229,12 @@ with r:
         )
     )
 l, r = st.columns([1, 2])
+
 with l:
     summoner = next(
         (info for info in infos if info['name'] == st.session_state.selected_summoner), None)
     st.image(
-        f"https://ddragon.leagueoflegends.com/cdn/14.23.1/img/profileicon/{summoner['profileIconId']}.png")
+        f"https://ddragon.leagueoflegends.com/cdn/{latest_version}/img/profileicon/{summoner['profileIconId']}.png")
     st.link_button("Summoner profile",
                    f"https://www.op.gg/summoners/vn/{summoner['gameName']}-{summoner['tagLine']}")
 
@@ -259,7 +273,7 @@ st.subheader("Signature champion")
 name = df[df['riotIdGameName'] == summoner['name']].groupby(
     'riotIdGameName')['championName'].value_counts().idxmax()[1]
 champion = requests.get(
-    f"https://ddragon.leagueoflegends.com/cdn/14.23.1/data/en_US/champion/{name}.json").json()['data'][name]
+    f"https://ddragon.leagueoflegends.com/cdn/{latest_version}/data/en_US/champion/{name}.json").json()['data'][name]
 
 l, r = st.columns([1, 1])
 with l:
