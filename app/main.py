@@ -134,6 +134,7 @@ for col, info in zip(columns, infos):
 chosen_summoners = st.multiselect(
     "Choose summoners",
     [info['name'] for info in infos],
+    default=[info['name'] for info in infos]
 )
 if len(chosen_summoners) > 1:
     df = df[df['riotIdGameName'].isin(chosen_summoners)]
