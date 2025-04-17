@@ -172,18 +172,22 @@ def graph_damage_over_matches(df):
 
     fig = go.Figure()
 
-    for summoner in summoners:
+    for i, summoner in enumerate(summoners):
         summoner_stats = grouped_stats[grouped_stats['riotIdGameName'] == summoner]
+        if i == 0:
+            hovertemplate = (
+                'Date: %{text}<extra></extra><br>' +
+                'Dmg: %{y:,.0f}' 
+            )
+        else:
+            hovertemplate = 'Dmg: %{y:,.0f}<extra></extra>'
         fig.add_trace(go.Scatter(
             x=summoner_stats['encoded_matchId'],
             y=summoner_stats['totalDamageDealtToChampions'],
             mode='lines',
             name=summoner,
-            hovertemplate=(
-                'Damage: %{y:,.0f}<br>' +
-                'Date: %{text}<extra></extra>'
-            ),
-            text=summoner_stats['date'],
+            hovertemplate=hovertemplate,
+            text=summoner_stats['date'].dt.strftime('%d %b %y %H:%M'),
         ))
 
     fig.update_layout(
