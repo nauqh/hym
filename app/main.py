@@ -73,17 +73,16 @@ with center:
 
 # NOTE: TEAM INFOMATION
 st.write("##")
-_, l, r, _ = st.columns([0.5, 1, 4, 0.5])
+_, center, _ = st.columns([0.5, 1, 0.5])
+with center:
+    l, r = st.columns([1, 1])
 
-with l:
-    st.image("app/img/logo.svg", width=250)
-    st.link_button("Summoner profile", "https://nauqh.github.io")
+    with l:
+        st.image("app/img/logo.svg", width=250)
 
-with r:
-    w, l, t = calculate_wins_loses(df)
-    _, a, b, _ = st.columns([1, 3, 2, 1])
+    with r:
+        w, l, t = calculate_wins_loses(df)
 
-    with a:
         st.write("""<span style='font-weight: 200; font-size: 1.5rem'>Challenger ARAM</span>""",
                  unsafe_allow_html=True)
         st.write("""<span style='
@@ -94,15 +93,13 @@ with r:
 
         st.write(f"`Winrate`: {w/t*100:.2f}%")
 
-        periods = [f"{date.strftime('%B')} {date.year}" for date in df['date'].dt.to_period(
-            "M").unique()] + ['All time']
-        filtered_period = st.selectbox(
-            "`Time period`:", periods, index=periods.index('All time'))
-        if filtered_period and filtered_period != 'All time':
-            df = filter_by_period(df, filtered_period)
+    periods = [f"{date.strftime('%B')} {date.year}" for date in df['date'].dt.to_period(
+        "M").unique()] + ['All time']
+    filtered_period = st.selectbox(
+        "`Time period`:", periods, index=periods.index('All time'))
+    if filtered_period and filtered_period != 'All time':
+        df = filter_by_period(df, filtered_period)
 
-    with b:
-        st.image("app/img/CHALLENGER.png", width=250)
 
 # NOTE: LINEUPS
 

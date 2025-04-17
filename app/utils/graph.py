@@ -2,7 +2,6 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-import pandas as pd
 
 
 def split_text(champions, n=4):
@@ -177,7 +176,7 @@ def graph_damage_over_matches(df):
         if i == 0:
             hovertemplate = (
                 'Date: %{text}<extra></extra><br>' +
-                'Dmg: %{y:,.0f}' 
+                'Dmg: %{y:,.0f}'
             )
         else:
             hovertemplate = 'Dmg: %{y:,.0f}<extra></extra>'
